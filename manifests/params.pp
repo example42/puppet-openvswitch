@@ -17,11 +17,11 @@ class openvswitch::params {
   ### Application related parameters
 
   $package = $::operatingsystem ? {
-    default => 'openvswitch',
+    default => 'openvswitch-switch',
   }
 
   $service = $::operatingsystem ? {
-    default => 'openvswitch',
+    default => 'openvswitch-switch',
   }
 
   $service_status = $::operatingsystem ? {
@@ -29,7 +29,7 @@ class openvswitch::params {
   }
 
   $process = $::operatingsystem ? {
-    default => 'openvswitch',
+    default => 'ovs-vswitchd',
   }
 
   $process_args = $::operatingsystem ? {
@@ -61,8 +61,8 @@ class openvswitch::params {
   }
 
   $config_file_init = $::operatingsystem ? {
-    /(?i:Debian|Ubuntu|Mint)/ => '/etc/default/openvswitch',
-    default                   => '/etc/sysconfig/openvswitch',
+    /(?i:Debian|Ubuntu|Mint)/ => '/etc/default/openvswitch-switch',
+    default                   => '/etc/sysconfig/openvswitch-switch',
   }
 
   $pid_file = $::operatingsystem ? {
@@ -81,7 +81,7 @@ class openvswitch::params {
     default => '/var/log/openvswitch/openvswitch.log',
   }
 
-  $port = '42'
+  $port = ''
   $protocol = 'tcp'
 
   # General Settings

@@ -341,19 +341,22 @@ class openvswitch (
     noop       => $openvswitch::bool_noops,
   }
 
-  file { 'openvswitch.conf':
-    ensure  => $openvswitch::manage_file,
-    path    => $openvswitch::config_file,
-    mode    => $openvswitch::config_file_mode,
-    owner   => $openvswitch::config_file_owner,
-    group   => $openvswitch::config_file_group,
-    require => Package[$openvswitch::package],
-    notify  => $openvswitch::manage_service_autorestart,
-    source  => $openvswitch::manage_file_source,
-    content => $openvswitch::manage_file_content,
-    replace => $openvswitch::manage_file_replace,
-    audit   => $openvswitch::manage_audit,
-    noop    => $openvswitch::bool_noops,
+  if $openvswitch::manage_file_source
+  or $openvswitch::manage_file_content {
+    file { 'openvswitch.conf':
+      ensure  => $openvswitch::manage_file,
+      path    => $openvswitch::config_file,
+      mode    => $openvswitch::config_file_mode,
+      owner   => $openvswitch::config_file_owner,
+      group   => $openvswitch::config_file_group,
+      require => Package[$openvswitch::package],
+      notify  => $openvswitch::manage_service_autorestart,
+      source  => $openvswitch::manage_file_source,
+      content => $openvswitch::manage_file_content,
+      replace => $openvswitch::manage_file_replace,
+      audit   => $openvswitch::manage_audit,
+      noop    => $openvswitch::bool_noops,
+    }
   }
 
   # The whole openvswitch configuration directory can be recursively overriden
