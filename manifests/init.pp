@@ -128,7 +128,7 @@
 # [*noops*]
 #   Set noop metaparameter to true for all the resources managed by the module.
 #   Basically you can run a dryrun for this specific module if you set
-#   this to true. Default: false
+#   this to true. Default: undef
 #
 # Default class params - As defined in openvswitch::params.
 # Note that these variables are mostly defined and used in the module itself,
@@ -253,7 +253,6 @@ class openvswitch (
   $bool_firewall=any2bool($firewall)
   $bool_debug=any2bool($debug)
   $bool_audit_only=any2bool($audit_only)
-  $bool_noops=any2bool($noops)
 
   ### Definition of some variables used in the module
   $manage_package = $openvswitch::bool_absent ? {
@@ -328,7 +327,7 @@ class openvswitch (
   ### Managed resources
   package { $openvswitch::package:
     ensure  => $openvswitch::manage_package,
-    noop    => $openvswitch::bool_noops,
+    noop    => $openvswitch::noops,
   }
 
   service { 'openvswitch':
@@ -338,7 +337,7 @@ class openvswitch (
     hasstatus  => $openvswitch::service_status,
     pattern    => $openvswitch::process,
     require    => Package[$openvswitch::package],
-    noop       => $openvswitch::bool_noops,
+    noop       => $openvswitch::noops,
   }
 
   if $openvswitch::manage_file_source
@@ -355,7 +354,7 @@ class openvswitch (
       content => $openvswitch::manage_file_content,
       replace => $openvswitch::manage_file_replace,
       audit   => $openvswitch::manage_audit,
-      noop    => $openvswitch::bool_noops,
+      noop    => $openvswitch::noops,
     }
   }
 
@@ -372,7 +371,7 @@ class openvswitch (
       force   => $openvswitch::bool_source_dir_purge,
       replace => $openvswitch::manage_file_replace,
       audit   => $openvswitch::manage_audit,
-      noop    => $openvswitch::bool_noops,
+      noop    => $openvswitch::noops,
     }
   }
 
@@ -390,7 +389,7 @@ class openvswitch (
       ensure    => $openvswitch::manage_file,
       variables => $classvars,
       helper    => $openvswitch::puppi_helper,
-      noop      => $openvswitch::bool_noops,
+      noop      => $openvswitch::noops,
     }
   }
 
@@ -404,7 +403,7 @@ class openvswitch (
         target   => $openvswitch::monitor_target,
         tool     => $openvswitch::monitor_tool,
         enable   => $openvswitch::manage_monitor,
-        noop     => $openvswitch::bool_noops,
+        noop     => $openvswitch::noops,
       }
     }
     if $openvswitch::service != '' {
@@ -416,7 +415,7 @@ class openvswitch (
         argument => $openvswitch::process_args,
         tool     => $openvswitch::monitor_tool,
         enable   => $openvswitch::manage_monitor,
-        noop     => $openvswitch::bool_noops,
+        noop     => $openvswitch::noops,
       }
     }
   }
@@ -433,7 +432,7 @@ class openvswitch (
       direction   => 'input',
       tool        => $openvswitch::firewall_tool,
       enable      => $openvswitch::manage_firewall,
-      noop        => $openvswitch::bool_noops,
+      noop        => $openvswitch::noops,
     }
   }
 
@@ -447,7 +446,7 @@ class openvswitch (
       owner   => 'root',
       group   => 'root',
       content => inline_template('<%= scope.to_hash.reject { |k,v| k.to_s =~ /(uptime.*|path|timestamp|free|.*password.*|.*psk.*|.*key)/ }.to_yaml %>'),
-      noop    => $openvswitch::bool_noops,
+      noop    => $openvswitch::noops,
     }
   }
 
