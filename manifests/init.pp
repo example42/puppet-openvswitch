@@ -20,8 +20,6 @@ class openvswitch (
   $service_ensure            = 'running',
   $service_enable            = true,
 
-  $registry_service_name     = $openvswitch::params::registry_service_name,
-
   $config_file_path          = $openvswitch::params::config_file_path,
   $config_file_replace       = $openvswitch::params::config_file_replace,
   $config_file_require       = 'Package[openvswitch]',
@@ -100,10 +98,6 @@ class openvswitch (
 
   if $openvswitch::service_name {
     service { $openvswitch::service_name:
-      ensure     => $openvswitch::manage_service_ensure,
-      enable     => $openvswitch::manage_service_enable,
-    }
-    service { $openvswitch::registry_service_name:
       ensure     => $openvswitch::manage_service_ensure,
       enable     => $openvswitch::manage_service_enable,
     }

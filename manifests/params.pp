@@ -4,27 +4,18 @@
 #
 class openvswitch::params {
 
-  $extra_package_name = $::osfamily ? {
-    default  => 'python-openvswitch',
-  }
+  $extra_package_name = undef
 
   $package_name = $::osfamily ? {
-    'Redhat' => 'openstack-openvswitch',
-    default  => 'openvswitch',
+    default  => 'openvswitch-switch',
   }
 
   $service_name = $::osfamily ? {
-    'Redhat' => 'openstack-openvswitch-api',
-    default  => 'openvswitch-api',
-  }
-
-  $registry_service_name = $::osfamily ? {
-    'Redhat' => 'openstack-openvswitch-registry',
-    default  => 'openvswitch-registry',
+    default  => 'openvswitch-switch',
   }
 
   $config_file_path = $::osfamily ? {
-    default => '/etc/openvswitch/openvswitch-api.conf',
+    default => '/etc/openvswitch/openvswitch.conf',
   }
 
   $config_file_mode = $::osfamily ? {
