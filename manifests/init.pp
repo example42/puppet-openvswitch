@@ -144,7 +144,7 @@ class openvswitch (
   if $openvswitch::monitor_class {
     class { $openvswitch::monitor_class:
       options_hash => $openvswitch::monitor_options_hash,
-      scope_hash   => {}, # TODO: Find a good way to inject class' scope
+      scope_hash   => {}, # TODO: Find a good way to inject class' scope
     }
   }
 
