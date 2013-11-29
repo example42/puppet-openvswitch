@@ -15,7 +15,7 @@ class openvswitch::params {
   }
 
   $config_file_path = $::osfamily ? {
-    default => '/etc/openvswitch/openvswitch.conf',
+    default => '',
   }
 
   $config_file_mode = $::osfamily ? {
