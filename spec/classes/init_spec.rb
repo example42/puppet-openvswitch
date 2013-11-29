@@ -4,7 +4,7 @@ describe 'openvswitch' do
 
   context 'Supported OS - ' do
     ['Debian', 'RedHat'].each do |osfamily|
-      describe "#{osfamily} Standard installation" do
+      describe "#{osfamily} standard installation" do
         let(:params) {{ }}
         let(:facts) {{
           :osfamily => osfamily,
@@ -13,9 +13,9 @@ describe 'openvswitch' do
         it { should contain_service('openvswitch').with_ensure('running') }
       end
 
-      describe "#{osfamily} Installation of a specific package version" do
+      describe "#{osfamily} installation of a specific package version" do
         let(:params) { {
-          :version => '1.0.42',
+          :package_ensure => '1.0.42',
         } }
         let(:facts) {{
           :osfamily => osfamily,
@@ -23,9 +23,9 @@ describe 'openvswitch' do
         it { should contain_package('openvswitch').with_ensure('1.0.42') }
       end
 
-      describe "#{osfamily} Removal of package installation" do
+      describe "#{osfamily} removal of package installation" do
         let(:params) { {
-          :ensure => 'absent',
+          :package_ensure => 'absent',
         } }
         let(:facts) {{
           :osfamily => osfamily,
@@ -36,7 +36,7 @@ describe 'openvswitch' do
         it 'should remove openvswitch configuration file' do should contain_file('openvswitch.conf').with_ensure('absent') end
       end
 
-      describe "#{osfamily} Service disabling" do
+      describe "#{osfamily} service disabling" do
         let(:params) { {
           :service_ensure => 'stopped',
           :service_enable => false,
@@ -48,7 +48,7 @@ describe 'openvswitch' do
         it 'should not enable at boot Service[openvswitch]' do should contain_service('openvswitch').with_enable('false') end
       end
 
-      describe "#{osfamily} Configuration via custom template" do
+      describe "#{osfamily} configuration via custom template" do
         let(:params) { {
           :config_file_template     => 'openvswitch/spec.conf',
           :config_file_options_hash => { 'opt_a' => 'value_a' },
@@ -62,7 +62,17 @@ describe 'openvswitch' do
         end
       end
 
-      describe "#{osfamily} Configuration via custom source file" do
+      describe "#{osfamily} configuration via custom content" do
+        let(:params) { {
+          :config_file_content    => 'my_content',
+        } }
+        let(:facts) {{
+          :osfamily => osfamily,
+        }}
+        it { should contain_file('openvswitch.conf').with_content(/my_content/) }
+      end
+
+      describe "#{osfamily} configuration via custom source file" do
         let(:params) { {
           :config_file_source => "puppet:///modules/openvswitch/spec.conf",
         } }
@@ -72,7 +82,7 @@ describe 'openvswitch' do
         it { should contain_file('openvswitch.conf').with_source('puppet:///modules/openvswitch/spec.conf') }
       end
 
-      describe "#{osfamily} Configuration via custom source dir" do
+      describe "#{osfamily} configuration via custom source dir" do
         let(:params) { {
           :config_dir_source => 'puppet:///modules/openvswitch/tests/',
           :config_dir_purge => true
@@ -85,7 +95,7 @@ describe 'openvswitch' do
         it { should contain_file('openvswitch.dir').with_force('true') }
       end
 
-      describe "#{osfamily} Service restart on config file change (default)" do
+      describe "#{osfamily} service restart on config file change (default)" do
         let(:facts) {{
           :osfamily => osfamily,
         }}
@@ -94,7 +104,7 @@ describe 'openvswitch' do
         end
       end
 
-      describe "#{osfamily} Service restart disabling on config file change" do
+      describe "#{osfamily} service restart disabling on config file change" do
         let(:params) { {
           :config_file_notify => '',
         } }

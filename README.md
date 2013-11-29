@@ -22,19 +22,17 @@ The module is based on **stdmod** naming standards version 0.9.0.
 
 Refer to http://github.com/stdmod/ for complete documentation on the common parameters.
 
-For a fully puppetized OpenStack implementation you'd better use the official StackForge modules. This module is intended to be a quick replacement for setups where you want to manage configurations based on plain files on an existing setup.
-
 
 ##Setup
 
 ###Resources managed by openvswitch module
 * This module installs the openvswitch package
-* Enables the openvswitch-api and openvswitch-registry services
+* Enables the openvswitch service
 * Can manage all the configuration files (by default no file is changed)
 
 ###Setup Requirements
-* PuppetLabs stdlib module
-* StdMod stdmod module
+* PuppetLabs [stdlib module](https://github.com/puppetlabs/puppetlabs-stdlib)
+* StdMod [stdmod module](https://github.com/stdmod/stdmod)
 * Puppet version >= 2.7.x
 * Facter version >= 1.6.2
 
@@ -104,19 +102,25 @@ The module provides also a generic define to manage any openvswitch configuratio
           config_dir_recursion => false, # Default: true.
         }
 
-
-* Install extra packages (clients, plugins...). Can be an array. Default: client package.
-
-        class { 'openvswitch':
-          extra_package_name    => [ 'python-openvswitch' , 'python-openvswitchclient' ],
-        }
-
-
-* Use the additional example42 subclass for puppi extensions
+* Provide an hash of files resources to be created with openvswitch::conf.
 
         class { 'openvswitch':
-          my_class => 'openvswitch::example42'
+          conf_hash => {
+            'openvswitch.conf' => {
+              template => 'site/openvswitch/openvswitch.conf',
+            },
+            'openvswitch.other.conf' => {
+              template => 'site/openvswitch/openvswitch.other.conf',
+            },
+          },
         }
+
+* Do not trigger a service restart when a config file changes.
+
+        class { 'openvswitch':
+          config_dir_notify => '', # Default: Service[openvswitch]
+        }
+
 
 ##Operating Systems Support
 

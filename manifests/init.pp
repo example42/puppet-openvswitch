@@ -11,8 +11,6 @@
 #
 class openvswitch (
 
-  $extra_package_name        = $openvswitch::params::extra_package_name,
-
   $package_name              = $openvswitch::params::package_name,
   $package_ensure            = 'present',
 
@@ -21,19 +19,19 @@ class openvswitch (
   $service_enable            = true,
 
   $config_file_path          = $openvswitch::params::config_file_path,
-  $config_file_replace       = $openvswitch::params::config_file_replace,
   $config_file_require       = 'Package[openvswitch]',
   $config_file_notify        = 'Service[openvswitch]',
   $config_file_source        = undef,
   $config_file_template      = undef,
   $config_file_content       = undef,
-  $config_file_options_hash  = undef,
-
+  $config_file_options_hash  = { } ,
 
   $config_dir_path           = $openvswitch::params::config_dir_path,
   $config_dir_source         = undef,
   $config_dir_purge          = false,
   $config_dir_recurse        = true,
+
+  $conf_hash                 = undef,
 
   $dependency_class          = undef,
   $my_class                  = undef,
@@ -67,7 +65,11 @@ class openvswitch (
 
   $manage_config_file_content = default_content($config_file_content, $config_file_template)
 
-  $manage_config_file_notify = pickx($config_file_notify)
+  $manage_config_file_notify  = $config_file_notify ? {
+    'class_default' => 'Service[openvswitch]',
+    ''              => undef,
+    default         => $config_file_notify,
+  }
 
   if $package_ensure == 'absent' {
     $manage_service_enable = undef
@@ -82,24 +84,19 @@ class openvswitch (
   }
 
 
+  # Dependency class
+
+  if $openvswitch::dependency_class {
+    include $openvswitch::dependency_class
+  }
+
+
   # Resources managed
 
   if $openvswitch::package_name {
-    package { $openvswitch::package_name:
+    package { 'openvswitch':
       ensure   => $openvswitch::package_ensure,
-    }
-  }
-
-  if $openvswitch::extra_package_name {
-    package { $openvswitch::extra_package_name:
-      ensure   => $openvswitch::package_ensure,
-    }
-  }
-
-  if $openvswitch::service_name {
-    service { $openvswitch::service_name:
-      ensure     => $openvswitch::manage_service_ensure,
-      enable     => $openvswitch::manage_service_enable,
+      name     => $openvswitch::package_name,
     }
   }
 
@@ -125,16 +122,24 @@ class openvswitch (
       recurse => $openvswitch::config_dir_recurse,
       purge   => $openvswitch::config_dir_purge,
       force   => $openvswitch::config_dir_purge,
-      notify  => $openvswitch::config_file_notify,
+      notify  => $openvswitch::manage_config_file_notify,
       require => $openvswitch::config_file_require,
+    }
+  }
+
+  if $openvswitch::service_name {
+    service { 'openvswitch':
+      ensure     => $openvswitch::manage_service_ensure,
+      name       => $openvswitch::service_name,
+      enable     => $openvswitch::manage_service_enable,
     }
   }
 
 
   # Extra classes
 
-  if $openvswitch::dependency_class {
-    include $openvswitch::dependency_class
+  if $conf_hash {
+    create_resources('openvswitch::conf', $conf_hash)
   }
 
   if $openvswitch::my_class {

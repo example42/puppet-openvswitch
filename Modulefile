@@ -1,5 +1,5 @@
 name          'example42-openvswitch'
-version       '3.0.0-alpha2'
+version       '3.0.0-beta1'
 source        'https://github.com/example42/puppet-openvswitch'
 author        'Alessandro Franceschi'
 license       'Apache License, Version 2.0'
