@@ -70,7 +70,7 @@ define openvswitch::conf (
   include openvswitch
 
   $manage_path    = pickx($path, "${openvswitch::config_dir_path}/${name}")
-  $manage_content = choose_default($content, $template)
+  $manage_content = default_content($content, $template)
   $manage_mode    = pickx($mode, $openvswitch::config_file_mode)
   $manage_owner   = pickx($owner, $openvswitch::config_file_owner)
   $manage_group   = pickx($group, $openvswitch::config_file_group)
