@@ -74,11 +74,13 @@ class openvswitch (
   if $package_ensure == 'absent' {
     $manage_service_enable = undef
     $manage_service_ensure = stopped
+    $manage_service_require = undef
     $config_dir_ensure = absent
     $config_file_ensure = absent
   } else {
     $manage_service_enable = $service_enable
     $manage_service_ensure = $service_ensure
+    $manage_service_require = Package['openvswitch']
     $config_dir_ensure = directory
     $config_file_ensure = present
   }
@@ -132,6 +134,7 @@ class openvswitch (
       ensure     => $openvswitch::manage_service_ensure,
       name       => $openvswitch::service_name,
       enable     => $openvswitch::manage_service_enable,
+      require    => $openvswitch::manage_service_require,
     }
   }
 
